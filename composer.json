@@ -1,0 +1,31 @@
+{
+    "name": "aiolos/datatables",
+    "description": "Datatables helper module for datatables 1.10",
+    "license": "BSD-3-Clause",
+    "minimum-stability": "dev",
+    "keywords": [
+        "datatables",
+        "bootstrap"
+    ],
+    "homepage": "http://www.github.com/aiolos/datatables",
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zendframework": "2.2.6"
+    },
+    "require-dev": {
+        "phploc/phploc": "dev-master",
+        "squizlabs/php_codesniffer": "dev-master",
+        "pdepend/pdepend": "2.0.*",
+        "phpmd/phpmd": "2.0.*",
+        "sebastian/phpcpd": "dev-master",
+        "phpunit/phpunit": "3.7.*@dev"
+    },
+    "autoload": {
+        "psr-0": {
+            "Datatables": "src/"
+        },
+        "classmap": [
+            "./Module.php"
+        ]
+    }
+}
