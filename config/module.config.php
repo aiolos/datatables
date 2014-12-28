@@ -37,7 +37,7 @@ return array(
                         'assets' => array(
                             'css/jquery.dataTables.css',
                             'css/dataTables.tableTools.min.css',
-                            'css/dataTables.responsive.min.css',
+                            'css/dataTables.responsive.css',
                         ),
                         'filters' => array(
                             'CssRewriteFilter' => array(

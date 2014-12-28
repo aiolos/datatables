@@ -10,7 +10,7 @@
     "homepage": "http://www.github.com/aiolos/datatables",
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zendframework": "2.2.6"
+        "zendframework/zendframework": "2.*"
     },
     "require-dev": {
         "phploc/phploc": "dev-master",
