@@ -35,7 +35,7 @@ return array(
                 'collections' => array(
                     'datatables_css' => array(
                         'assets' => array(
-                            'css/jquery.dataTables.css',
+                            //'css/jquery.dataTables.css',
                             'css/dataTables.tableTools.min.css',
                             'css/dataTables.responsive.css',
                         ),
@@ -62,11 +62,11 @@ return array(
 
                     'datatables_js' => array(
                         'assets' => array(
-                            'js/jquery.dataTables.min.js',
+                            'js/jquery.dataTables.js',
                             //'js/jquery.dataTables.extensions.js',
-                            //'js/datatables-bootstrap.js',
-                            'js/dataTables.tableTools.min.js',
-                            'js/dataTables.responsive.min.js',
+                            'js/dataTables.bootstrap.js',
+                            'js/dataTables.tableTools.js',
+                            'js/dataTables.responsive.js',
                         ),
                         //'filters' => array(
                         //    '?JSMinFilter' => array(

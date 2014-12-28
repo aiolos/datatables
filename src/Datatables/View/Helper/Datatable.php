@@ -42,14 +42,12 @@ class Datatable extends AbstractHelper
     public function __construct()
     {
         $this->setDisplayLength(25);
-        $this->setOption('bLengthChange', true);
-        $this->setOption('bFilter', false);
-        $this->setOption('bJQueryUI', false);
-        $this->setOption('bAutoWidth', false);
-        $this->setOption('sPaginationType', 'bs_full');
-        $this->setOption('sDom', '<"well"<"row"t>><"row"<"col-xs-6"i><"col-xs-6"p>>'); //
-        //$this->setOption("sDom", "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>");
-        $this->addPostVariable('version', '2.0');
+        $this->setOption('lengthChange', true);
+        $this->setOption('responsive', true);
+        $this->setOption('searching', false);
+        $this->setOption('autoWidth', true);
+        $this->setOption('pagingType', 'full_numbers');
+        $this->setOption('dom', '<"datatablebox datatable"<"pull-right"<"filterDescription">T>ft><"bottom"p<"TableButtons">i><"clear">');
     }
 
     public function __invoke()
@@ -161,21 +159,13 @@ class Datatable extends AbstractHelper
 
     public function setDomTemplate($template)
     {
-        $this->setOption('sDom', $template);
+        $this->setOption('dom', $template);
         return $this;
     }
 
     public function setDisplayLength($length)
     {
-        $this->setOption('iDisplayLength', $length);
-        /* @todo change this ugly ass fix */
-        if ($length == 10) {
-            //$this->setOption("sDom", "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>");
-            $this->setOption('sDom', '<"datatablebox datatablebox-small datatable"<"filterDescription">Tft><"bottom"p<"TableButtons">i><"clear">');
-        } else {
-            //$this->setOption("sDom", "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>");
-            $this->setOption('sDom', '<"datatablebox datatable"<"pull-right"<"filterDescription">T>ft><"bottom"p<"TableButtons">i><"clear">');
-        }
+        $this->setOption('pageLength', $length);
 
         return $this;
     }
@@ -186,23 +176,17 @@ class Datatable extends AbstractHelper
         return $this;
     }
 
-    public function setDataUrl($url)
+    public function setAjaxData($properties)
     {
-        $this->setOption('bServerSide', true);
-        $this->setOption('sAjaxSource', $url);
-        return $this;
-    }
+        $this->setOption('ajax', $properties);
 
-    public function setDataProperty($name)
-    {
-        $this->setOption('sAjaxDataProp', $name);
         return $this;
     }
 
     public function setSorting($columnName, $direction)
     {
         $columnIndex = $this->getColumnIndexByName($columnName);
-        $this->setOption('aaSorting', array(array($columnIndex, $direction)));
+        $this->setOption('order', array(array($columnIndex, $direction)));
 
         return $this;
     }
@@ -224,42 +208,6 @@ class Datatable extends AbstractHelper
         $this->onRowClick(
             'function(id, node) {
                 $(window).attr("location", "' . $url . '/id/" + id);
-            }'
-        );
-        return $this;
-    }
-
-    public function onRowClickView($url, $element)
-    {
-        $this->onRowClick(
-            'function(id, node) {
-                ' . $this->getId() . 'DataTable.fnChangeDisplayLength(10, node);
-                $.ajax({
-                    url: "' . $url . '/format/html/id/" + id,
-                }).done(function(data) {
-                    $("#' . $element . '").slideDown(400, function() { $("#' . $element . '").html(data) });
-                });
-
-                $(document).on(
-                    "regiecentrale:closeDetailView",
-                    function() {
-                        ' . $this->getId() . 'DataTable.fnChangeDisplayLength(25);
-                        $("#' . $element . '").html("").slideUp(400);
-                        Regiecentrale.Datatables.setCurrentRow(' . $this->getId() . ', null);
-                        $("table#' . $this->getId() . '").find("tbody tr.selectedrow").removeClass("selectedrow");
-                    }
-                );
-            }'
-        );
-        return $this;
-    }
-
-    public function onRowClickHighlight()
-    {
-        $this->onRowClick(
-            'function(id, node) {
-                $("table#' . $this->getId() . '").find("tbody tr.selectedrow").removeClass("selectedrow");
-                node.addClass("selectedrow");
             }'
         );
         return $this;
@@ -319,43 +267,48 @@ class Datatable extends AbstractHelper
         }
 
         /* Render a specific callback to bridge the "gap" between the helpers public interface and the datatable public interface */
-        $callback = 'function (aoData) { aoData.push(';
-        foreach ($this->postVariables as $key => $value) {
-            $callback .= \Zend\Json\Json::encode(array('name' => $key, 'value' => $value), false, array('enableJsonExprFinder' => true)) . ',';
-        }
-        if (count($this->postVariables) > 0) {
-            $callback = substr($callback, 0, -1);
-        }
-        $callback .=  ');}';
+        //        $callback = 'function (aoData) { aoData.push(';
+        //        foreach ($this->postVariables as $key => $value) {
+        //            $callback .= \Zend\Json\Json::encode(
+        //                array('name' => $key, 'value' => $value),
+        //                false,
+        //                array('enableJsonExprFinder' => true)
+        //            ) . ',';
+        //        }
+        //        if (count($this->postVariables) > 0) {
+        //            $callback = substr($callback, 0, -1);
+        //        }
+        //        $callback .=  ');}';
 
-        $this->setOption(
-            'oTableTools',
-            array(
-                "aButtons" => $this->headerButtons
-            )
-        );
+        //        $this->setOption(
+        //            'tableTools',
+        //            array(
+        //                "aButtons" => $this->headerButtons
+        //            )
+        //        );
 
         /* Merge all options to a single array */
         $initOptions = array_merge(
             $this->options,
             array(
-                'aoColumns' => $columns,
-                'oLanguage' => $this->getTranslations(),
-                'fnServerParams' => new \Zend\Json\Expr($callback),
+                'columns' => $columns,
+                'language' => $this->getTranslations(),
+                //'fnServerParams' => new \Zend\Json\Expr($callback),
             )
         );
 
         if (!is_null($this->data)) {
-            $initOptions['aaData'] = $this->data;
+            $initOptions['data'] = $this->data;
         }
 
         /* The actual datatable */
         return '
             <script type="text/javascript">
                 $(function() {
-                    ' . $this->getId() . 'DataTable = $("table#' . $this->getId() . '").dataTable(' . \Zend\Json\Json::encode($initOptions, false, array('enableJsonExprFinder' => true)) . ');
+                    ' . $this->getId() . 'DataTable = $("table#' . $this->getId() . '").DataTable('
+                    . \Zend\Json\Json::encode($initOptions, false, array('enableJsonExprFinder' => true))
+                    . ');
                 });
-
             </script>
         ';
     }
@@ -364,11 +317,11 @@ class Datatable extends AbstractHelper
     {
         $options = $column->options;
         /* Name */
-        $options['sName'] = $column->name;
+        $options['name'] = $column->name;
 
-        /* mData fallback */
-        if (!array_key_exists('mData', $options)) {
-            $options['mData'] = $column->name;
+        /* data fallback */
+        if (!array_key_exists('data', $options)) {
+            $options['data'] = $column->name;
         }
 
         return $options;
@@ -377,16 +330,16 @@ class Datatable extends AbstractHelper
     protected function getTranslations()
     {
         return array(
-            'sLengthMenu' => '%1$s per pagina', '_MENU_',
-            'sZeroRecords' => 'Geen resultaten',
-            'sInfo' => '_START_ - _END_ van _TOTAL_',
-            'sInfoEmpty' => 'Geen resultaten',
-            'sInfoFiltered' => '(totaal _MAX_)',
-            'oPaginate' => array(
-                'sFirst' =>  "",
-                'sPrevious' => "",
-                'sNext' => "",
-                'sLast' => ""
+            'lengthMenu' => '%1$s per pagina', '_MENU_',
+            'zeroRecords' => 'Geen resultaten',
+            'info' => '_START_ - _END_ van _TOTAL_',
+            'infoEmpty' => 'Geen resultaten',
+            'infoFiltered' => '(totaal _MAX_)',
+            'paginate' => array(
+                'first' =>  "Eerste",
+                'previous' => "Vorige",
+                'next' => "Volgende",
+                'last' => "Laatste"
             )
         );
     }
