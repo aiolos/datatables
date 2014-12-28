@@ -47,7 +47,7 @@ class Datatable extends AbstractHelper
         $this->setOption('searching', false);
         $this->setOption('autoWidth', true);
         $this->setOption('pagingType', 'full_numbers');
-        $this->setOption('dom', '<"datatablebox datatable"<"pull-right"<"filterDescription">T>ft><"bottom"p<"TableButtons">i><"clear">');
+        $this->setOption('dom', '<"datatablebox datatable"<"pull-right"<"filterDescription"><"headerTableButtons col-xs-6">T><"pull-left"f>t><"bottom"p<"TableButtons">i><"clear">');
     }
 
     public function __invoke()
@@ -80,37 +80,6 @@ class Datatable extends AbstractHelper
         $column->options = $options;
         $this->columns[] = $column;
 
-        return $this;
-    }
-
-    public function addCheckboxColumn($name, $label = null, $options = array(), $inverse = false)
-    {
-        if (is_null($label)) {
-            $label = '<span class="checkboxSelectAll ui-icon ui-icon-check option-icon"></span>';
-        }
-        $options = array_merge(
-            array(
-                'mData' => new Expr('function(data) { return "<span class=\"checkBoxRow ui-icon ui-icon-checkbox option-icon ' . ($inverse ? 'ui-icon-checkbox-checked' : '') . '\"></span>" }'),
-                'bSortable' => false
-            ),
-            $options
-        );
-        $this->addColumn($name, $label, $options);
-        $this->onRowClick(
-            'function(id, node, event) {
-                if ($(event.target).hasClass("checkBoxRow")) {
-                    $(event.target).toggleClass("ui-icon-checkbox-checked");
-
-                    var condition = ' . ($inverse ? '!' : '') . '$(event.target).hasClass("ui-icon-checkbox-checked");
-
-                    if (condition) {
-                        Regiecentrale.Datatables.addToMultiSelection("' . $this->getId() . '", id);
-                    } else {
-                        Regiecentrale.Datatables.removeFromMultiSelection("' . $this->getId() . '", id);
-                    }
-                }
-            }'
-        );
         return $this;
     }
 
@@ -229,11 +198,17 @@ class Datatable extends AbstractHelper
         return '
             <script type="text/javascript">
                 function addButtons() {
-                    $(".TableButtons").html("<div class=\'dataTables_buttons pull-right\' id=\''. $this->getId() . 'Buttons\'>' . implode(' ', $this->buttons) . '</div>");
+                    $(".TableButtons").html("<div class=\'dataTables_buttons pull-right\' id=\''. $this->getId() . 'Buttons\'>'
+                    . '<div style=\'margin: 20px 0;\'>'
+                    . implode(' ', $this->buttons)
+                    . '</div>'
+                    . '</div>");
+                    $(".headerTableButtons").html("<div class=\'dataTables_buttons pull-right\' id=\''. $this->getId() . 'HeaderButtons\'>'
+                    . implode(' ', $this->headerButtons)
+                    . '</div>");
                 };
             </script>
         ';
-        //return '<div class="dataTables_buttons pull-right" id="'. $this->getId() . 'Buttons">' . implode(' ', $this->buttons) . '</div>';
     }
 
     public function renderTableHeader()
@@ -281,13 +256,6 @@ class Datatable extends AbstractHelper
         //        }
         //        $callback .=  ');}';
 
-        //        $this->setOption(
-        //            'tableTools',
-        //            array(
-        //                "aButtons" => $this->headerButtons
-        //            )
-        //        );
-
         /* Merge all options to a single array */
         $initOptions = array_merge(
             $this->options,
@@ -295,6 +263,11 @@ class Datatable extends AbstractHelper
                 'columns' => $columns,
                 'language' => $this->getTranslations(),
                 //'fnServerParams' => new \Zend\Json\Expr($callback),
+                'drawCallback' => new \Zend\Json\Expr(
+                    'function() {
+                        addButtons();
+                    }'
+                )
             )
         );
 
@@ -341,7 +314,11 @@ class Datatable extends AbstractHelper
                 'previous' => "Vorige",
                 'next' => "Volgende",
                 'last' => "Laatste"
-            )
+            ),
+            'search' => '',
+            'searchPlaceholder' => 'Zoek',
+            'thousands' => '.',
+            'decimal' => ',',
         );
     }
 
