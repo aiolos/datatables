@@ -178,6 +178,7 @@ class Datatable extends AbstractHelper
 
     public function setAjaxData($properties)
     {
+        $this->setOption('serverSide', true);
         $this->setOption('ajax', $properties);
 
         return $this;
