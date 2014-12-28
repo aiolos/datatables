@@ -342,44 +342,6 @@ class Datatable extends AbstractHelper
                 'aoColumns' => $columns,
                 'oLanguage' => $this->getTranslations(),
                 'fnServerParams' => new \Zend\Json\Expr($callback),
-                'fnCreatedRow' => new \Zend\Json\Expr(
-                    'function(nRow, aData, iDataIndex) {
-                        if ($(nRow).attr("data-id") == null && aData.id != null) {
-                            $(nRow).attr("data-id", aData.id);
-                            if (parseInt(aData.id) === parseInt(Regiecentrale.Datatables.getCurrentRow(' . $this->getId() . '))) {
-                                $(nRow).addClass("selectedrow");
-                            }
-                        }
-                    }'
-                ),
-                'fnDrawCallback' => new \Zend\Json\Expr(
-                    'function() {
-                        addButtons();
-                        setFilterDescription();
-                        $("table#' . $this->getId() . ' tbody tr").on("click", function(e) {
-                            if ($(e.target).hasClass("btn")) {
-                                return;
-                            }
-                            var node = $(this);
-
-                            if (node.attr("data-id") === undefined) {
-                                return;
-                            }
-
-                            Regiecentrale.Datatables.setCurrentRow(' . $this->getId() . ', $(this).attr("data-id"));
-                            var callbacks = ' . \Zend\Json\Json::encode($this->rowClickCallback, false, array('enableJsonExprFinder' => true)) . ';
-                            var result = null;
-                            if (callbacks !== null && callbacks.length > 0) {
-                                $.each(callbacks, function(index, callback) {
-                                    callback(Regiecentrale.Datatables.getCurrentRow(' . $this->getId() . '), node, e);
-
-                                     return !e.isPropagationStopped();
-
-                                });
-                            }
-                        });
-                    }'
-                )
             )
         );
 
