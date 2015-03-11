@@ -310,10 +310,10 @@ class Datatable extends AbstractHelper
             'infoEmpty' => 'Geen resultaten',
             'infoFiltered' => '(totaal _MAX_)',
             'paginate' => array(
-                'first' =>  "Eerste",
-                'previous' => "Vorige",
-                'next' => "Volgende",
-                'last' => "Laatste"
+                'first' =>  "<i class='glyphicon glyphicon-backward'></i>",
+                'previous' => "<i class='glyphicon glyphicon-chevron-left'></i>",
+                'next' => "<i class='glyphicon glyphicon-chevron-right'></i>",
+                'last' => "<i class='glyphicon glyphicon-forward'></i>"
             ),
             'search' => '',
             'searchPlaceholder' => 'Zoek',
