@@ -266,6 +266,23 @@ class Datatable extends AbstractHelper
                 'drawCallback' => new \Zend\Json\Expr(
                     'function() {
                         addButtons();
+                        var table = $("table#' . $this->getId() . '").DataTable();
+                        $("table#' . $this->getId() . ' tbody tr").on("click", function(e) {
+                            if ($(e.target).hasClass("btn")) {
+                                return;
+                            }
+                            var node = $(this);
+                            var rowData = table.row( this ).data();
+
+                            var callbacks = ' . \Zend\Json\Json::encode($this->rowClickCallback, false, array('enableJsonExprFinder' => true)) . ';
+                            var result = null;
+                            if (callbacks !== null && callbacks.length > 0) {
+                                $.each(callbacks, function(index, callback) {
+                                    callback(rowData.id, node, e);
+                                    return !e.isPropagationStopped();
+                                });
+                            }
+                        });
                     }'
                 )
             )
