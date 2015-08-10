@@ -268,7 +268,14 @@ class Datatable extends AbstractHelper
                         addButtons();
                         var table = $("table#' . $this->getId() . '").DataTable();
                         $("table#' . $this->getId() . ' tbody tr").on("click", function(e) {
-                            if ($(e.target).hasClass("btn")) {
+                            if ($(e.target).hasClass("btn")
+                                || $(e.target).is("select")
+                                || $(e.target).is("option")
+                                || $(e.target).is("input")
+                                || $(e.target).is("a")
+                                || $(e.target).is("button")
+                            ) {
+                                e.stopPropagation();
                                 return;
                             }
                             var node = $(this);
