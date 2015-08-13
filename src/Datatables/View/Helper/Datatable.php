@@ -32,6 +32,12 @@ class Datatable extends AbstractHelper
     protected $buttons = array();
     protected $headerButtons = array();
     protected $filterDescription;
+    protected $classes = array(
+        'table',
+        'table-striped',
+        'table-condensed',
+        'table-hover',
+    );
 
     /* Special live events */
     protected $rowClickCallback;
@@ -169,6 +175,9 @@ class Datatable extends AbstractHelper
 
     public function onRowClick($callback)
     {
+        if (!in_array('rowClick', $this->classes)) {
+            $this->classes[] = 'rowClick';
+        }
         $this->rowClickCallback[] = new \Zend\Json\Expr($callback);
         return $this;
     }
@@ -225,7 +234,7 @@ class Datatable extends AbstractHelper
 
     public function renderTable()
     {
-        $table = '<table id="' . $this->getId() . '" class="table table-striped table-condensed table-hover"><thead><tr>';
+        $table = '<table id="' . $this->getId() . '" class="' . join(' ', $this->classes) . '"><thead><tr>';
         foreach ($this->columns as $column) {
             $table .= '<th>' . $column->label . '</th>';
         }
