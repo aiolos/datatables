@@ -284,7 +284,6 @@ class Datatable extends AbstractHelper
                                 || $(e.target).is("a")
                                 || $(e.target).is("button")
                             ) {
-                                e.stopPropagation();
                                 return;
                             }
                             var node = $(this);
