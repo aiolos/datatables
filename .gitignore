@@ -1,6 +1,7 @@
 # Composer files
 composer.phar
 vendor/
+cache.properties
 
 # Local configs
 config/autoload/*.local.php
@@ -20,3 +21,5 @@ demos/
 extras/documentation
 /nbproject/private/
 /nbproject/
+
+.idea

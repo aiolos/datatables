@@ -27,7 +27,7 @@
         </exec>
         <delete file="${basedir}/build/installer.php"/>
         <exec executable="${basedir}/composer.phar" failonerror="true">
-            <arg value="update" />
+            <arg value="install" />
         </exec>
     </target>
 
