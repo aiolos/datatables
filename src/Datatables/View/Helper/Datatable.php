@@ -99,7 +99,6 @@ class Datatable extends AbstractHelper
                 return $index;
             }
         }
-
     }
 
     public function addButton($button)
@@ -127,7 +126,6 @@ class Datatable extends AbstractHelper
         if (array_key_exists($key, $this->options)) {
             return $this->options[$key];
         }
-        return;
     }
 
     public function hasOption($key)
@@ -348,13 +346,21 @@ class Datatable extends AbstractHelper
         return $this->render();
     }
 
+    /**
+     * @return Datatable
+     */
     public function enableFlashButtons()
     {
         $this->setOption('dom', self::DOM_FLASH_BUTTONS);
+        return $this;
     }
 
+    /**
+     * @return Datatable
+     */
     public function disableFlashButtons()
     {
         $this->setOption('dom', self::DOM_NO_FLASH_BUTTONS);
+        return $this;
     }
 }
