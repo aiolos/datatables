@@ -24,6 +24,9 @@ use Zend\Json\Expr;
  */
 class Datatable extends AbstractHelper
 {
+    const DOM_NO_FLASH_BUTTONS = '<"datatablebox datatable"<"pull-right"<"filterDescription"><"headerTableButtons col-xs-6">><"pull-left"f>t><"bottom"p<"TableButtons">i><"clear">';
+    const DOM_FLASH_BUTTONS = '<"datatablebox datatable"<"pull-right"<"filterDescription"><"headerTableButtons col-xs-6">T><"pull-left"f>t><"bottom"p<"TableButtons">i><"clear">';
+
     protected $id;
     protected $data;
     protected $options = array();
@@ -53,7 +56,7 @@ class Datatable extends AbstractHelper
         $this->setOption('searching', false);
         $this->setOption('autoWidth', true);
         $this->setOption('pagingType', 'full_numbers');
-        $this->setOption('dom', '<"datatablebox datatable"<"pull-right"<"filterDescription"><"headerTableButtons col-xs-6">T><"pull-left"f>t><"bottom"p<"TableButtons">i><"clear">');
+        $this->enableFlashButtons();
     }
 
     public function __invoke()
@@ -96,7 +99,6 @@ class Datatable extends AbstractHelper
                 return $index;
             }
         }
-
     }
 
     public function addButton($button)
@@ -124,7 +126,6 @@ class Datatable extends AbstractHelper
         if (array_key_exists($key, $this->options)) {
             return $this->options[$key];
         }
-        return;
     }
 
     public function hasOption($key)
@@ -251,20 +252,6 @@ class Datatable extends AbstractHelper
             $columns[] = $this->renderColumn($column);
         }
 
-        /* Render a specific callback to bridge the "gap" between the helpers public interface and the datatable public interface */
-        //        $callback = 'function (aoData) { aoData.push(';
-        //        foreach ($this->postVariables as $key => $value) {
-        //            $callback .= \Zend\Json\Json::encode(
-        //                array('name' => $key, 'value' => $value),
-        //                false,
-        //                array('enableJsonExprFinder' => true)
-        //            ) . ',';
-        //        }
-        //        if (count($this->postVariables) > 0) {
-        //            $callback = substr($callback, 0, -1);
-        //        }
-        //        $callback .=  ');}';
-
         /* Merge all options to a single array */
         $initOptions = array_merge(
             $this->options,
@@ -357,5 +344,23 @@ class Datatable extends AbstractHelper
     public function __toString()
     {
         return $this->render();
+    }
+
+    /**
+     * @return Datatable
+     */
+    public function enableFlashButtons()
+    {
+        $this->setOption('dom', self::DOM_FLASH_BUTTONS);
+        return $this;
+    }
+
+    /**
+     * @return Datatable
+     */
+    public function disableFlashButtons()
+    {
+        $this->setOption('dom', self::DOM_NO_FLASH_BUTTONS);
+        return $this;
     }
 }

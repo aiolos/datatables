@@ -8,17 +8,25 @@
         "bootstrap"
     ],
     "homepage": "http://www.github.com/aiolos/datatables",
+    "config" : {
+        "platform": {
+            "php": "5.3.3"
+        },
+        "preferred-install": "dist",
+        "github-oauth": {
+            "github.com": "bbfa5b693dd04d7cef0fe86eb7626cc579ab32d5"
+        }
+    },
     "require": {
-        "php": ">=5.3.3",
-        "zendframework/zendframework": "2.*"
+        "zendframework/zendframework": "~2.0"
     },
     "require-dev": {
-        "phploc/phploc": "dev-master",
-        "squizlabs/php_codesniffer": "dev-master",
-        "pdepend/pdepend": "2.0.*",
-        "phpmd/phpmd": "2.0.*",
-        "sebastian/phpcpd": "dev-master",
-        "phpunit/phpunit": "3.7.*@dev"
+        "phploc/phploc": "~2.1",
+        "squizlabs/php_codesniffer": "~2.3",
+        "pdepend/pdepend": "~2.0",
+        "phpmd/phpmd": "~2.0",
+        "sebastian/phpcpd": "~2.0",
+        "phpunit/phpunit": "~3.7"
     },
     "autoload": {
         "psr-0": {
