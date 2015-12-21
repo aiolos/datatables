@@ -54,7 +54,7 @@ class Datatable extends AbstractHelper
     {
         $this->setDisplayLength(25);
         $this->setOption('lengthChange', true);
-        $this->setOption('responsive', true);
+        $this->setOption('responsive', false);
         $this->setOption('searching', false);
         $this->setOption('autoWidth', true);
         $this->setOption('pagingType', 'full_numbers');
