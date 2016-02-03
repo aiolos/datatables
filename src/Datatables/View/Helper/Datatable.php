@@ -11,6 +11,7 @@
  */
 namespace Datatables\View\Helper;
 
+use Zend\Json\Json;
 use Zend\View\Helper\AbstractHelper;
 use Zend\Json\Expr;
 
@@ -43,6 +44,7 @@ class Datatable extends AbstractHelper
     );
 
     /* Special live events */
+    protected $rowDrawCallback;
     protected $rowClickCallback;
 
     /**
@@ -52,7 +54,7 @@ class Datatable extends AbstractHelper
     {
         $this->setDisplayLength(25);
         $this->setOption('lengthChange', true);
-        $this->setOption('responsive', true);
+        $this->setOption('responsive', false);
         $this->setOption('searching', false);
         $this->setOption('autoWidth', true);
         $this->setOption('pagingType', 'full_numbers');
@@ -99,6 +101,7 @@ class Datatable extends AbstractHelper
                 return $index;
             }
         }
+        return null;
     }
 
     public function addButton($button)
@@ -126,6 +129,7 @@ class Datatable extends AbstractHelper
         if (array_key_exists($key, $this->options)) {
             return $this->options[$key];
         }
+        return array();
     }
 
     public function hasOption($key)
@@ -174,12 +178,18 @@ class Datatable extends AbstractHelper
         return $this;
     }
 
+    public function onRowDraw($callback)
+    {
+        $this->rowDrawCallback[] = new Expr($callback);
+        return $this;
+    }
+
     public function onRowClick($callback)
     {
         if (!in_array('rowClick', $this->classes)) {
             $this->classes[] = 'rowClick';
         }
-        $this->rowClickCallback[] = new \Zend\Json\Expr($callback);
+        $this->rowClickCallback[] = new Expr($callback);
         return $this;
     }
 
@@ -216,7 +226,7 @@ class Datatable extends AbstractHelper
                     $(".headerTableButtons").html("<div class=\'dataTables_buttons pull-right\' id=\''. $this->getId() . 'HeaderButtons\'>'
                     . implode(' ', $this->headerButtons)
                     . '</div>");
-                };
+                }
             </script>
         ';
     }
@@ -228,7 +238,7 @@ class Datatable extends AbstractHelper
             <script type="text/javascript">
                 function setFilterDescription() {
                     $(".filterDescription").text("'. $this->filterDescription . '");
-                };
+                }
             </script>
         ';
     }
@@ -258,8 +268,18 @@ class Datatable extends AbstractHelper
             array(
                 'columns' => $columns,
                 'language' => $this->getTranslations(),
-                //'fnServerParams' => new \Zend\Json\Expr($callback),
-                'drawCallback' => new \Zend\Json\Expr(
+                'rowCallback' => new Expr(
+                    'function(row, data) {
+                        var callbacks = ' . Json::encode($this->rowDrawCallback, false, array('enableJsonExprFinder' => true)) . ';
+                        var result = null;
+                        if (callbacks !== null && callbacks.length > 0) {
+                            $.each(callbacks, function(index, callback) {
+                                callback(row, data);
+                            });
+                        }
+                    }'
+                ),
+                'drawCallback' => new Expr(
                     'function() {
                         addButtons();
                         var table = $("table#' . $this->getId() . '").DataTable();
@@ -276,7 +296,7 @@ class Datatable extends AbstractHelper
                             var node = $(this);
                             var rowData = table.row( this ).data();
 
-                            var callbacks = ' . \Zend\Json\Json::encode($this->rowClickCallback, false, array('enableJsonExprFinder' => true)) . ';
+                            var callbacks = ' . Json::encode($this->rowClickCallback, false, array('enableJsonExprFinder' => true)) . ';
                             var result = null;
                             if (callbacks !== null && callbacks.length > 0) {
                                 $.each(callbacks, function(index, callback) {
@@ -299,7 +319,7 @@ class Datatable extends AbstractHelper
             <script type="text/javascript">
                 $(function() {
                     ' . $this->getId() . 'DataTable = $("table#' . $this->getId() . '").DataTable('
-                    . \Zend\Json\Json::encode($initOptions, false, array('enableJsonExprFinder' => true))
+                    . Json::encode($initOptions, false, array('enableJsonExprFinder' => true))
                     . ');
                 });
             </script>
